@@ -1,4 +1,4 @@
-// BuildToCountsDashboard.jsx — with auto-sync from Google Sheets + improved field labels
+// BuildToCountsDashboard.jsx — full version with sync, tabs, labels, and graphs
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -81,7 +81,7 @@ export default function BuildToCountsDashboard() {
 
   return (
     <div className="p-4 grid gap-4">
-      <h1 className="text-2xl font-bold">Build to Counts Dashboard</h1>
+      <h1 className="text-2xl font-bold">Build to Counts Dashboard 🚀</h1>
       <div className="flex gap-2">
         <Button onClick={handlePull}>🔄 Sync Now</Button>
         <Button onClick={handlePush}>💾 Save to Sheets</Button>
@@ -94,6 +94,56 @@ export default function BuildToCountsDashboard() {
           <TabsTrigger value="manage">Manage Subscriptions</TabsTrigger>
           <TabsTrigger value="inventory">Inventory & Sales</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="summary">
+          <Card>
+            <CardContent className="p-4">
+              <h2 className="text-xl mb-2">Inventory Overview</h2>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="made" fill="#8884d8" name="Made" />
+                  <Bar dataKey="sold" fill="#82ca9d" name="Sold" />
+                  <Bar dataKey="expected" fill="#ffb347" name="Expected Demand" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="details">
+          <div className="grid gap-4">
+            {data.map((item) => (
+              <Card key={item.name}>
+                <CardContent className="p-4">
+                  <h3 className="text-lg font-semibold mb-1">{item.name}</h3>
+                  <p className="text-sm mb-1">Made: {item.made} | Sold: {item.sold} | In Stock: {item.inventory}</p>
+                  <Progress value={(item.sold / item.made) * 100} className="h-2" />
+                  <p className="text-xs mb-2">{Math.round((item.sold / item.made) * 100)}% Sold</p>
+                  <p className="text-xs">Expected Weekly Demand: {item.expected}</p>
+                  <p className="text-xs font-semibold text-red-600">
+                    {item.inventory < item.expected ? "⚠️ Low Inventory" : "Stock OK"}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="recurring">
+          <Card>
+            <CardContent className="p-4">
+              <h2 className="text-xl mb-2">Recurring Weekly Needs</h2>
+              <ul className="text-sm list-disc pl-4">
+                {data.map((item) => (
+                  <li key={item.name}>{item.name}: {item.expected} bags</li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="manage">
           <Card>
