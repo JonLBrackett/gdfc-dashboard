@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import credentials from "../gdfc-service-account.json" assert { type: "json" };
+const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
 
 export default async function handler(req, res) {
   try {
