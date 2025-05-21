@@ -1,0 +1,1 @@
+export default function BuildToCountsDashboard() { return <div>Dashboard placeholder</div>; }
